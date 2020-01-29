@@ -64,30 +64,74 @@ def drawLevel():
 
 figure=random.randint(1,7)
 
-def createFigure(figure):
-    startRow=1
-    startColumn=int(columnSize/2)-1
-    if figure == 1:
-        field[startRow-1:startRow+1,startColumn-1:startColumn+1]=1
-    elif figure == 2:
-        field[startRow,startColumn-1:startColumn+2]=2
-        field[startRow:startRow+2,startColumn]=2
-    elif figure == 3:
-        field[startRow,startColumn-1:startColumn+3]=3
-    elif figure == 4:
-        field[startRow-1:startRow+2,startColumn]=4
-        field[startRow+1,startColumn:startColumn+2]=4
-    elif figure == 5: 
-        field[startRow-1:startRow+2,startColumn]=5
-        field[startRow+1,startColumn-1:startColumn+1]=5
-    elif figure == 6:
-        field[startRow-1,startColumn:startColumn+2]=6
-        field[startRow,startColumn-1:startColumn+1]=6
-    elif figure == 7:
-        field[startRow-1,startColumn-1:startColumn+1]=7
-        field[startRow,startColumn:startColumn+2]=7
+def putFigure(figure,figureRow,figureColumn):
     
-createFigure(7)
+    if figure == 1:
+        if figureRow == rowSize:
+            return False
+        field[figureRow-1:figureRow+1,figureColumn-1:figureColumn+1]=1
+    elif figure == 2:
+        if figureRow+1 == rowSize:
+            return False
+        field[figureRow,figureColumn-1:figureColumn+2]=2
+        field[figureRow:figureRow+2,figureColumn]=2
+    elif figure == 3:
+        if figureRow == rowSize:
+            return False
+        field[figureRow,figureColumn-1:figureColumn+3]=3
+    elif figure == 4:
+        if figureRow+1 == rowSize:
+            return False
+        field[figureRow-1:figureRow+2,figureColumn]=4
+        field[figureRow+1,figureColumn:figureColumn+2]=4
+    elif figure == 5: 
+        if figureRow+1 == rowSize:
+            return False
+        field[figureRow-1:figureRow+2,figureColumn]=5
+        field[figureRow+1,figureColumn-1:figureColumn+1]=5
+    elif figure == 6:
+        if figureRow == rowSize:
+            return False
+        field[figureRow-1,figureColumn:figureColumn+2]=6
+        field[figureRow,figureColumn-1:figureColumn+1]=6
+    elif figure == 7:
+        if figureRow == rowSize:
+            return False
+        field[figureRow-1,figureColumn-1:figureColumn+1]=7
+        field[figureRow,figureColumn:figureColumn+2]=7
+    return True
+
+
+def removeFigure(figure,figureRow,figureColumn):
+    
+    if figure == 1:
+        field[figureRow-1:figureRow+1,figureColumn-1:figureColumn+1]=0
+    elif figure == 2:
+        field[figureRow,figureColumn-1:figureColumn+2]=0
+        field[figureRow:figureRow+2,figureColumn]=0
+    elif figure == 3:
+        field[figureRow,figureColumn-1:figureColumn+3]=0
+    elif figure == 4:
+        field[figureRow-1:figureRow+2,figureColumn]=0
+        field[figureRow+1,figureColumn:figureColumn+2]=0
+    elif figure == 5: 
+        field[figureRow-1:figureRow+2,figureColumn]=0
+        field[figureRow+1,figureColumn-1:figureColumn+1]=0
+    elif figure == 6:
+        field[figureRow-1,figureColumn:figureColumn+2]=0
+        field[figureRow,figureColumn-1:figureColumn+1]=0
+    elif figure == 7:
+        field[figureRow-1,figureColumn-1:figureColumn+1]=0
+        field[figureRow,figureColumn:figureColumn+2]=0
+
+figureRow=1
+figureColumn=int(columnSize/2)-1
+putFigure(figure,figureRow,figureColumn)
+
+SPEED = 60
+downSpeed = SPEED/2
+counter = 0
+
 
 while True:
     for event in pygame.event.get():
@@ -96,6 +140,13 @@ while True:
             sys.exit()
         #if event.type == KEYDOWN:
             #if event.key == K_RIGHT:
+    counter = counter + 1
+    if counter % downSpeed == 0:
+        removeFigure(figure, figureRow, figureColumn)
+        figureRow = figureRow + 1
+    putFigure(figure,figureRow,figureColumn)
     drawLevel()
-    clock.tick(60)            
+    clock.tick(SPEED)            
     pygame.display.update()   
+    
+
