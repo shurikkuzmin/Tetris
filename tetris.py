@@ -62,40 +62,64 @@ def drawLevel():
                 pygame.draw.rect(SURFACE,RED,(tileWidth*column,row*tileHeight,tileWidth,tileHeight))
             
 
-figure=random.randint(1,7)
-
+figure=random.randint(1,7)  
 def putFigure(figure,figureRow,figureColumn):
     
     if figure == 1:
         if figureRow == rowSize:
             return False
+        if numpy.sum(field[figureRow-1:figureRow+1,figureColumn-1:figureColumn+1]) > 0:
+            return False
         field[figureRow-1:figureRow+1,figureColumn-1:figureColumn+1]=1
     elif figure == 2:
         if figureRow+1 == rowSize:
+            return False
+        if numpy.sum(field[figureRow,figureColumn-1:figureColumn+2]) > 0:
+            return False
+        if numpy.sum(field[figureRow:figureRow+2,figureColumn]) > 0:
             return False
         field[figureRow,figureColumn-1:figureColumn+2]=2
         field[figureRow:figureRow+2,figureColumn]=2
     elif figure == 3:
         if figureRow == rowSize:
             return False
+        if numpy.sum(field[figureRow,figureColumn-1:figureColumn+3]) > 0:
+            return False
         field[figureRow,figureColumn-1:figureColumn+3]=3
     elif figure == 4:
         if figureRow+1 == rowSize:
             return False
+        if numpy.sum(field[figureRow-1:figureRow+2,figureColumn]) > 0:
+            return False
+        if numpy.sum(field[figureRow+1,figureColumn:figureColumn+2]) > 0:
+            return False
+        
         field[figureRow-1:figureRow+2,figureColumn]=4
         field[figureRow+1,figureColumn:figureColumn+2]=4
     elif figure == 5: 
         if figureRow+1 == rowSize:
+            return False
+        if numpy.sum(field[figureRow-1:figureRow+2,figureColumn]) > 0:
+            return False
+        if numpy.sum(field[figureRow+1,figureColumn-1:figureColumn+1]) > 0:
             return False
         field[figureRow-1:figureRow+2,figureColumn]=5
         field[figureRow+1,figureColumn-1:figureColumn+1]=5
     elif figure == 6:
         if figureRow == rowSize:
             return False
+        if numpy.sum(field[figureRow-1,figureColumn:figureColumn+2]) > 0:
+            return False
+        if numpy.sum(field[figureRow,figureColumn-1:figureColumn+1]) > 0:
+            return False
         field[figureRow-1,figureColumn:figureColumn+2]=6
         field[figureRow,figureColumn-1:figureColumn+1]=6
     elif figure == 7:
         if figureRow == rowSize:
+            return False
+        if numpy.sum(field[figureRow-1,figureColumn-1:figureColumn+1]) > 0:
+            return False
+        if numpy.sum(field[figureRow,figureColumn:figureColumn+2]) > 0:
             return False
         field[figureRow-1,figureColumn-1:figureColumn+1]=7
         field[figureRow,figureColumn:figureColumn+2]=7
@@ -129,7 +153,7 @@ figureColumn=int(columnSize/2)-1
 putFigure(figure,figureRow,figureColumn)
 
 SPEED = 60
-downSpeed = SPEED/2
+downSpeed = SPEED/10
 counter = 0
 
 
@@ -143,8 +167,15 @@ while True:
     counter = counter + 1
     if counter % downSpeed == 0:
         removeFigure(figure, figureRow, figureColumn)
-        figureRow = figureRow + 1
-    putFigure(figure,figureRow,figureColumn)
+        if putFigure(figure,figureRow+1,figureColumn) == True:
+            figureRow = figureRow+1
+        else:
+            putFigure(figure,figureRow,figureColumn)
+            figure=random.randint(1,7)
+            figureRow=1
+            figureColumn=int(columnSize/2)-1
+        putFigure(figure,figureRow,figureColumn)
+            
     drawLevel()
     clock.tick(SPEED)            
     pygame.display.update()   
