@@ -125,7 +125,6 @@ def putFigure(figure,figureRow,figureColumn):
         field[figureRow,figureColumn:figureColumn+2]=7
     return True
 
-
 def removeFigure(figure,figureRow,figureColumn):
     
     if figure == 1:
@@ -148,6 +147,10 @@ def removeFigure(figure,figureRow,figureColumn):
         field[figureRow-1,figureColumn-1:figureColumn+1]=0
         field[figureRow,figureColumn:figureColumn+2]=0
 
+def GameOver(figureRow):
+    pygame.quit()
+    sys.exit()
+
 figureRow=1
 figureColumn=int(columnSize/2)-1
 putFigure(figure,figureRow,figureColumn)
@@ -162,8 +165,17 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        #if event.type == KEYDOWN:
-            #if event.key == K_RIGHT:
+        if figureRow <= 0: 
+            GameOver(figureRow) == True
+            
+        if event.type == KEYDOWN:
+            removeFigure(figure, figureRow, figureColumn)
+            if event.key == K_RIGHT:
+               if putFigure(figure,figureRow,figureColumn+1) == True:
+                   figureColumn = figureColumn+1
+            if event.key == K_LEFT:
+               if putFigure(figure,figureRow,figureColumn-1) == True:
+                   figureColumn = figureColumn-1
     counter = counter + 1
     if counter % downSpeed == 0:
         removeFigure(figure, figureRow, figureColumn)
@@ -175,9 +187,8 @@ while True:
             figureRow=1
             figureColumn=int(columnSize/2)-1
         putFigure(figure,figureRow,figureColumn)
-            
+        
+        
     drawLevel()
     clock.tick(SPEED)            
     pygame.display.update()   
-    
-
