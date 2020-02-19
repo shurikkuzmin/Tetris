@@ -70,9 +70,17 @@ def putFigure(figure,figureRow,figureColumn):
             return False
         if numpy.sum(field[figureRow-1:figureRow+1,figureColumn-1:figureColumn+1]) > 0:
             return False
+        if figureColumn-1 < 0:
+            return False
+        if figureColumn > columnSize - 1:
+            return False
         field[figureRow-1:figureRow+1,figureColumn-1:figureColumn+1]=1
     elif figure == 2:
         if figureRow+1 == rowSize:
+            return False
+        if figureColumn-1 < 0:
+            return False
+        if figureColumn+1 > columnSize - 1:
             return False
         if numpy.sum(field[figureRow,figureColumn-1:figureColumn+2]) > 0:
             return False
@@ -83,22 +91,34 @@ def putFigure(figure,figureRow,figureColumn):
     elif figure == 3:
         if figureRow == rowSize:
             return False
+        if figureColumn-1 < 0:
+            return False
+        if figureColumn+2 > columnSize - 1:
+            return False
         if numpy.sum(field[figureRow,figureColumn-1:figureColumn+3]) > 0:
             return False
         field[figureRow,figureColumn-1:figureColumn+3]=3
     elif figure == 4:
         if figureRow+1 == rowSize:
             return False
+        if figureColumn < 0:
+            return False
+        if figureColumn+1 > columnSize-1:
+            return False
         if numpy.sum(field[figureRow-1:figureRow+2,figureColumn]) > 0:
             return False
         if numpy.sum(field[figureRow+1,figureColumn:figureColumn+2]) > 0:
             return False
-        
         field[figureRow-1:figureRow+2,figureColumn]=4
         field[figureRow+1,figureColumn:figureColumn+2]=4
     elif figure == 5: 
         if figureRow+1 == rowSize:
             return False
+        if figureColumn-1 < 0:
+            return False
+        if figureColumn > columnSize - 1:
+            return False
+        
         if numpy.sum(field[figureRow-1:figureRow+2,figureColumn]) > 0:
             return False
         if numpy.sum(field[figureRow+1,figureColumn-1:figureColumn+1]) > 0:
@@ -108,6 +128,10 @@ def putFigure(figure,figureRow,figureColumn):
     elif figure == 6:
         if figureRow == rowSize:
             return False
+        if figureColumn-1 < 0:
+            return False
+        if figureColumn+1 > columnSize -1:
+            return False
         if numpy.sum(field[figureRow-1,figureColumn:figureColumn+2]) > 0:
             return False
         if numpy.sum(field[figureRow,figureColumn-1:figureColumn+1]) > 0:
@@ -116,6 +140,10 @@ def putFigure(figure,figureRow,figureColumn):
         field[figureRow,figureColumn-1:figureColumn+1]=6
     elif figure == 7:
         if figureRow == rowSize:
+            return False
+        if figureColumn-1 < 0:
+            return False
+        if figureColumn+1 > columnSize - 1:
             return False
         if numpy.sum(field[figureRow-1,figureColumn-1:figureColumn+1]) > 0:
             return False
@@ -156,7 +184,7 @@ figureColumn=int(columnSize/2)-1
 putFigure(figure,figureRow,figureColumn)
 
 SPEED = 60
-downSpeed = SPEED/10
+downSpeed = SPEED/5
 counter = 0
 
 
@@ -169,13 +197,14 @@ while True:
             GameOver(figureRow) == True
             
         if event.type == KEYDOWN:
-            removeFigure(figure, figureRow, figureColumn)
             if event.key == K_RIGHT:
-               if putFigure(figure,figureRow,figureColumn+1) == True:
-                   figureColumn = figureColumn+1
+                removeFigure(figure, figureRow, figureColumn)  
+                if putFigure(figure,figureRow,figureColumn+1) == True:
+                    figureColumn = figureColumn+1
             if event.key == K_LEFT:
-               if putFigure(figure,figureRow,figureColumn-1) == True:
-                   figureColumn = figureColumn-1
+                removeFigure(figure, figureRow, figureColumn)
+                if putFigure(figure,figureRow,figureColumn-1) == True:
+                    figureColumn = figureColumn-1
     counter = counter + 1
     if counter % downSpeed == 0:
         removeFigure(figure, figureRow, figureColumn)
