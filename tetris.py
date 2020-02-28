@@ -187,15 +187,16 @@ SPEED = 60
 downSpeed = SPEED/5
 counter = 0
 
-
+gameOver = False
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        if figureRow <= 0: 
-            GameOver(figureRow) == True
-            
+        #if figureRow <= 0: 
+        #    GameOver(figureRow) == True
+        if gameOver == True:
+            continue
         if event.type == KEYDOWN:
             if event.key == K_RIGHT:
                 removeFigure(figure, figureRow, figureColumn)  
@@ -205,6 +206,14 @@ while True:
                 removeFigure(figure, figureRow, figureColumn)
                 if putFigure(figure,figureRow,figureColumn-1) == True:
                     figureColumn = figureColumn-1
+            if event.key == K_DOWN:
+                removeFigure(figure, figureRow, figureColumn)
+                while putFigure(figure, figureRow+1, figureColumn) == True:
+                    removeFigure(figure, figureRow+1, figureColumn)
+                    figureRow = figureRow+1
+    if gameOver == True:
+        continue
+    
     counter = counter + 1
     if counter % downSpeed == 0:
         removeFigure(figure, figureRow, figureColumn)
@@ -215,7 +224,18 @@ while True:
             figure=random.randint(1,7)
             figureRow=1
             figureColumn=int(columnSize/2)-1
-        putFigure(figure,figureRow,figureColumn)
+            if putFigure(figure,figureRow, figureColumn) == False:
+                basicFont = pygame.font.SysFont(None, 20)
+                text = basicFont.render('Over!', True, WHITE, BLUE)
+                textRect = text.get_rect()
+                textRect.centerx = WINDOWWIDTH/2
+                textRect.centery = WINDOWHEIGHT/2
+                SURFACE.blit(text,textRect)
+                gameOver = True
+                pygame.display.update()
+                continue
+            
+    putFigure(figure,figureRow,figureColumn)
         
         
     drawLevel()
