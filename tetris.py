@@ -63,7 +63,7 @@ def drawLevel():
             
 
 figure=random.randint(1,7)  
-def putFigure(figure,figureRow,figureColumn):
+def putFigure(figure,figureRow,figureColumn,check=True):
     
     if figure == 1:
         if figureRow == rowSize:
@@ -74,7 +74,8 @@ def putFigure(figure,figureRow,figureColumn):
             return False
         if figureColumn > columnSize - 1:
             return False
-        field[figureRow-1:figureRow+1,figureColumn-1:figureColumn+1]=1
+        if check == False:
+            field[figureRow-1:figureRow+1,figureColumn-1:figureColumn+1]=1
     elif figure == 2:
         if figureRow+1 == rowSize:
             return False
@@ -86,8 +87,9 @@ def putFigure(figure,figureRow,figureColumn):
             return False
         if numpy.sum(field[figureRow:figureRow+2,figureColumn]) > 0:
             return False
-        field[figureRow,figureColumn-1:figureColumn+2]=2
-        field[figureRow:figureRow+2,figureColumn]=2
+        if check == False:
+            field[figureRow,figureColumn-1:figureColumn+2]=2
+            field[figureRow:figureRow+2,figureColumn]=2
     elif figure == 3:
         if figureRow == rowSize:
             return False
@@ -97,7 +99,8 @@ def putFigure(figure,figureRow,figureColumn):
             return False
         if numpy.sum(field[figureRow,figureColumn-1:figureColumn+3]) > 0:
             return False
-        field[figureRow,figureColumn-1:figureColumn+3]=3
+        if check == False:
+            field[figureRow,figureColumn-1:figureColumn+3]=3
     elif figure == 4:
         if figureRow+1 == rowSize:
             return False
@@ -109,8 +112,9 @@ def putFigure(figure,figureRow,figureColumn):
             return False
         if numpy.sum(field[figureRow+1,figureColumn:figureColumn+2]) > 0:
             return False
-        field[figureRow-1:figureRow+2,figureColumn]=4
-        field[figureRow+1,figureColumn:figureColumn+2]=4
+        if check == False:
+            field[figureRow-1:figureRow+2,figureColumn]=4
+            field[figureRow+1,figureColumn:figureColumn+2]=4
     elif figure == 5: 
         if figureRow+1 == rowSize:
             return False
@@ -118,13 +122,13 @@ def putFigure(figure,figureRow,figureColumn):
             return False
         if figureColumn > columnSize - 1:
             return False
-        
         if numpy.sum(field[figureRow-1:figureRow+2,figureColumn]) > 0:
             return False
         if numpy.sum(field[figureRow+1,figureColumn-1:figureColumn+1]) > 0:
             return False
-        field[figureRow-1:figureRow+2,figureColumn]=5
-        field[figureRow+1,figureColumn-1:figureColumn+1]=5
+        if check == False:
+            field[figureRow-1:figureRow+2,figureColumn]=5
+            field[figureRow+1,figureColumn-1:figureColumn+1]=5
     elif figure == 6:
         if figureRow == rowSize:
             return False
@@ -136,8 +140,9 @@ def putFigure(figure,figureRow,figureColumn):
             return False
         if numpy.sum(field[figureRow,figureColumn-1:figureColumn+1]) > 0:
             return False
-        field[figureRow-1,figureColumn:figureColumn+2]=6
-        field[figureRow,figureColumn-1:figureColumn+1]=6
+        if check == False:
+            field[figureRow-1,figureColumn:figureColumn+2]=6
+            field[figureRow,figureColumn-1:figureColumn+1]=6
     elif figure == 7:
         if figureRow == rowSize:
             return False
@@ -149,8 +154,9 @@ def putFigure(figure,figureRow,figureColumn):
             return False
         if numpy.sum(field[figureRow,figureColumn:figureColumn+2]) > 0:
             return False
-        field[figureRow-1,figureColumn-1:figureColumn+1]=7
-        field[figureRow,figureColumn:figureColumn+2]=7
+        if check == False:
+            field[figureRow-1,figureColumn-1:figureColumn+1]=7
+            field[figureRow,figureColumn:figureColumn+2]=7
     return True
 
 def removeFigure(figure,figureRow,figureColumn):
@@ -174,11 +180,17 @@ def removeFigure(figure,figureRow,figureColumn):
     elif figure == 7:
         field[figureRow-1,figureColumn-1:figureColumn+1]=0
         field[figureRow,figureColumn:figureColumn+2]=0
-
-def GameOver(figureRow):
-    pygame.quit()
-    sys.exit()
-
+        
+def EndGame():
+    basicFont = pygame.font.SysFont(None, 30)
+    text = basicFont.render('Game Over!', True, RED)
+    textRect = text.get_rect()
+    textRect.centerx = WINDOWWIDTH/2
+    textRect.centery = WINDOWHEIGHT/2
+    SURFACE.blit(text,textRect)
+    pygame.display.update()
+    
+gameOver = False
 figureRow=1
 figureColumn=int(columnSize/2)-1
 putFigure(figure,figureRow,figureColumn)
@@ -187,55 +199,44 @@ SPEED = 60
 downSpeed = SPEED/5
 counter = 0
 
-gameOver = False
 while True:
+    removeFigure(figure, figureRow, figureColumn)
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-        #if figureRow <= 0: 
-        #    GameOver(figureRow) == True
         if gameOver == True:
             continue
         if event.type == KEYDOWN:
+            figureNewRow = figureRow
+            figureNewColumn = figureColumn
             if event.key == K_RIGHT:
-                removeFigure(figure, figureRow, figureColumn)  
-                if putFigure(figure,figureRow,figureColumn+1) == True:
-                    figureColumn = figureColumn+1
+                figureNewColumn = figureColumn+1
             if event.key == K_LEFT:
-                removeFigure(figure, figureRow, figureColumn)
-                if putFigure(figure,figureRow,figureColumn-1) == True:
-                    figureColumn = figureColumn-1
+                figureNewColumn = figureColumn-1
             if event.key == K_DOWN:
-                removeFigure(figure, figureRow, figureColumn)
-                while putFigure(figure, figureRow+1, figureColumn) == True:
-                    removeFigure(figure, figureRow+1, figureColumn)
-                    figureRow = figureRow+1
+                figureNewRow = figureRow+1
+            if putFigure(figure,figureNewRow,figureNewColumn) == True:
+                figureRow = figureNewRow
+                figureColumn = figureNewColumn
     if gameOver == True:
         continue
     
     counter = counter + 1
     if counter % downSpeed == 0:
-        removeFigure(figure, figureRow, figureColumn)
         if putFigure(figure,figureRow+1,figureColumn) == True:
             figureRow = figureRow+1
         else:
-            putFigure(figure,figureRow,figureColumn)
+            putFigure(figure,figureRow,figureColumn,False)
             figure=random.randint(1,7)
             figureRow=1
             figureColumn=int(columnSize/2)-1
             if putFigure(figure,figureRow, figureColumn) == False:
-                basicFont = pygame.font.SysFont(None, 20)
-                text = basicFont.render('Over!', True, WHITE, BLUE)
-                textRect = text.get_rect()
-                textRect.centerx = WINDOWWIDTH/2
-                textRect.centery = WINDOWHEIGHT/2
-                SURFACE.blit(text,textRect)
+                EndGame()
                 gameOver = True
-                pygame.display.update()
                 continue
             
-    putFigure(figure,figureRow,figureColumn)
+    putFigure(figure,figureRow,figureColumn,False)
         
         
     drawLevel()
